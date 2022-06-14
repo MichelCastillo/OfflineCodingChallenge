@@ -17,4 +17,5 @@ public interface IProductService {
 
     void deleteProductById(long id);
 
+    Optional<Product> findProductBySku(String sku);
 }

@@ -18,4 +18,14 @@ public class ImagesServiceImpl implements IImagesService {
     public Set<Images> findImagesByProductId(long id) {
         return imagesRepository.findImagesByProductId(id);
     }
+
+    @Override
+    public Set<Images> findImagesByProductSku(String sku) {
+        return imagesRepository.findImagesByProductSku(sku);
+    }
+
+    @Override
+    public Images save(Images images) {
+        return imagesRepository.save(images);
+    }
 }

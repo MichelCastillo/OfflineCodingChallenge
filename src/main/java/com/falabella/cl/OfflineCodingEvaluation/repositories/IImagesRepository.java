@@ -9,4 +9,6 @@ import java.util.Set;
 public interface IImagesRepository extends JpaRepository<Images, Long> {
 
     Set<Images> findImagesByProductId(long product_id);
+
+    Set<Images> findImagesByProductSku(String sku);
 }

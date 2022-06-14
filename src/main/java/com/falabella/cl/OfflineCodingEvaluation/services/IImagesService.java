@@ -10,4 +10,7 @@ public interface IImagesService {
 
     Set<Images> findImagesByProductId(long id);
 
+    Set<Images> findImagesByProductSku(String sku);
+
+    Images save(Images images);
 }

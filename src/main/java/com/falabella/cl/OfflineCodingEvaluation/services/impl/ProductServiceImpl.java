@@ -41,4 +41,9 @@ public class ProductServiceImpl implements IProductService {
     public void deleteProductById(long id) {
         productRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<Product> findProductBySku(String sku) {
+        return productRepository.findBySku(sku);
+    }
 }

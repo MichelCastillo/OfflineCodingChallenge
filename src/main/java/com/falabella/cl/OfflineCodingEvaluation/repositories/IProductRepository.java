@@ -16,8 +16,7 @@ public interface IProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findById(Long id);
 
     @Query("select p from Product p where p.sku=?1")
-    Optional<Product> findByKPU(String sku);
+    Optional<Product> findBySku(String sku);
 
     void delete(Product product);
-
 }

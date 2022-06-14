@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -27,38 +28,61 @@ public class ProductController {
     private IImagesService imagesService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProduct(@PathVariable(name = "id") long id){
+    public ResponseEntity<?> getProductById(@PathVariable(name = "id") long id){
 
-        Product product = productService.findProductById(id)
-                .orElseThrow(() -> new ProductNotFoundException("There is no product with that ID."));
+        Optional<Product> product = productService.findProductById(id);
 
+        if (product.isPresent()){
             Map<String, Object> response = new HashMap();
             Set<Images> productImages = imagesService.findImagesByProductId(id);
 
-            response.put("product", product);
+            response.put("product", product.get());
             response.put("images", productImages);
 
             return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/sku/{SKU}")
+    public ResponseEntity<?> getProduct(@PathVariable(name = "SKU") String sku){
+
+        Optional<Product> product = productService.findProductBySku(sku);
+
+        if (product.isPresent()){
+            Map<String, Object> response = new HashMap();
+            Set<Images> productImages = imagesService.findImagesByProductSku(sku);
+
+            response.put("product", product.get());
+            response.put("images", productImages);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
     }
 
     @PostMapping("/saveProduct")
     public ResponseEntity<?> postProduct(@RequestBody Product product){
 
-        Product _product = productService.save(new Product(
+        if (productService.save(new Product(
                 product.getSku(),
                 product.getName(),
                 product.getBrand(),
                 product.getSize(),
                 product.getPrice(),
                 product.getImageurl()
-        ));
+        )) != null){
+            return ResponseEntity.accepted().body("Product saved successfully.");
+        }
 
-        return new ResponseEntity<>(_product, HttpStatus.CREATED);
+        return ResponseEntity.unprocessableEntity().body("There was an error saving the product.");
     }
 
     @PutMapping("/modifyProduct/{id}")
-    public ResponseEntity<?> updateProdct(@PathVariable("id") long id, @RequestBody Product product){
+    public ResponseEntity<?> updateProduct(@PathVariable("id") long id, @RequestBody Product product){
 
         Product _product = productService.findProductById(id)
                 .orElseThrow(() -> new ProductNotFoundException("There is no Product with that ID"));
